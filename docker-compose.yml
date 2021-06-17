@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+    web:
+        build: .
+        command: python3 server.py
+        volumes:
+            - .:/app:delegated
+        ports:
+            - "5000:5000"
+        depends_on:
+            - db
+    db:
+        image: mariadb
+        restart: always
+        ports:
+            - ${DBPORT}:${DBPORT}
+        volumes:
+            - "./mysql:/var/lib/mysql"
+            - "./initdb.d:/docker-entrypoint-initdb.d"
+        environment:
+            - MYSQL_ROOT_PASSWORD=${ROOTPASS}
+            - MYSQL_DATABASE=${DATABASE}
+            - MYSQL_USER=${USERNAME}
+            - MYSQL_PASSWORD=${USERPASS}
+ 
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
